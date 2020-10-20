@@ -6,6 +6,7 @@ const connectDB = async () => {
     const options = {
       useUnifiedTopology: true,
       useNewUrlParser: true,
+      useCreateIndex: true,
     };
     await mongoose.connect(config.get("databaseURI"), options);
     console.log("Connected successfully to database");

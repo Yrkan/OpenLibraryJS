@@ -16,10 +16,13 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/v1/admins", require("./routes/api/v1/admins"));
+app.use("/api/v1/auth", require("./routes/api/v1/auth"));
 app.use("/api/v1/authors", require("./routes/api/v1/authors"));
 app.use("/api/v1/books", require("./routes/api/v1/books"));
 app.use("/api/v1/notes", require("./routes/api/v1/notes"));
 app.use("/api/v1/users", require("./routes/api/v1/users"));
+
+const Admins = require("./models/Admins");
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
