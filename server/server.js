@@ -22,8 +22,6 @@ app.use("/api/v1/books", require("./routes/api/v1/books"));
 app.use("/api/v1/notes", require("./routes/api/v1/notes"));
 app.use("/api/v1/users", require("./routes/api/v1/users"));
 
-const Admins = require("./models/Admins");
-
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });

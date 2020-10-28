@@ -1,4 +1,4 @@
 {
-  "databaseURI": "mongodb+srv://tioxgreen:811998aZ-@db1.zqagr.mongodb.net/<dbname>?retryWrites=true&w=majority",
-  "jwtKey": "someprivatekey"
+  "databaseURI": "mongodb+srv://tioxgreen:811998aZ-@db1.zqagr.mongodb.net/DB1?retryWrites=true&w=majority",
+  "jwtKey": "supercr@zy$ecreTP@swD"
 }

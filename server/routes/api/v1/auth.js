@@ -5,7 +5,8 @@ const jwt = require("jsonwebtoken");
 const config = require("config");
 
 const router = Router();
-const Admins = require("../../../models/Admins");
+const Admin = require("../../../models/Admin");
+const { authAdmin } = require("../../../middlewears/auth");
 
 // @Endpoint:       POST /api/v1/auth/login/admins
 // @Description:    Login admin
@@ -26,8 +27,7 @@ router.post(
     // Good Request
     try {
       const { username, password } = req.body;
-      const admin = await Admins.findOne({ username });
-
+      const admin = await Admin.findOne({ username });
       // Username not found
       if (!admin) {
         return res.status(401).json({ error: { msg: "Invalid Credentials" } });
@@ -60,4 +60,18 @@ router.post(
   }
 );
 
+// @Endpoint:       Get /api/v1/auth
+// @Description     Get Authentificated admin
+// @Access          Private
+router.get("/", authAdmin, async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.admin.id).select("-password");
+
+    if (!admin) res.status(401).json({ error: { msg: "Invalid Admin" } });
+    return res.json(admin);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: { msg: "Server Error" } });
+  }
+});
 module.exports = router;
