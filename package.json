@@ -1,0 +1,13 @@
+{
+  "name": "openlibraryjs-server",
+  "version": "1.0.0",
+  "description": "A mern (mongoDB, Express, React, NodeJS) web app for managing online book libraries",
+  "main": "index.js",
+  "author": "Thami Memel <memelthami@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "nodemon": "^2.0.5"
+  }
+}
