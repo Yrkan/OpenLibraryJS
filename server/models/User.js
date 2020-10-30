@@ -18,11 +18,14 @@ const UserSchema = new mongoose.Schema({
   gavatar: {
     type: String,
   },
-  is_email_confirmed: {
+  isEmailConfirmed: {
     type: Boolean,
     default: false,
   },
-  is_banned: {
+  confirmationToken: {
+    type: String,
+  },
+  isBanned: {
     type: Boolean,
     default: false,
   },
