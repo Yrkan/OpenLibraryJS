@@ -54,6 +54,7 @@ router.get("/:id", authAdmin, async (req, res) => {
     return res.status(500).json({ error: { msg: "Server Error" } });
   }
 });
+
 // @Endpoint:       POST /api/v1/admins
 // @Description:    Create an Admin
 // @Access:         Private
@@ -220,7 +221,6 @@ router.put(
 // @Endpoint:       DELETE /api/v1/admins/:id
 // @Description:    Delete an Admin
 // @Access:         Private
-
 router.delete("/:id", authAdmin, async (req, res) => {
   try {
     // Only superadmins can edit other admins
