@@ -1,4 +1,4 @@
-const bcryptjs = require("bcryptjs");
+/*const bcryptjs = require("bcryptjs");
 
 const crypt = async () => {
   const hash = await bcryptjs.genSalt(10);
@@ -7,3 +7,17 @@ const crypt = async () => {
 };
 
 crypt();
+*/
+const ttt = async () => {
+  const jwt = require("jsonwebtoken");
+
+  const payload = {
+    a: "ff",
+  };
+
+  const token = await jwt.sign(payload, "abcd");
+
+  console.log(token);
+};
+
+ttt();
