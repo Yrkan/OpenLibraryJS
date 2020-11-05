@@ -13,7 +13,7 @@ router.get("/", authAdmin, async (req, res) => {
   try {
     const loggedAdmin = await Admin.findById(req.admin.id);
     if (!loggedAdmin)
-      res.status(401).json({ error: { msg: "Invalid Credentials" } });
+      return res.status(401).json({ error: { msg: "Invalid Credentials" } });
 
     // Only superadmins can get a list of all admins
     // IMPORTANT!!!! HAVING MULTIPLE SUPER ADMINS CAN CAUSE PROBLEMS !!!!
