@@ -1,6 +1,5 @@
 const { Router } = require("express");
 const { check, validationResult } = require("express-validator");
-const bcrypt = require("bcryptjs");
 
 const { authAdmin } = require("../../../middlewears/auth");
 const router = Router();
@@ -8,13 +7,12 @@ const Admin = require("../../../models/Admin");
 const {
   USERNAME_ALREADY_IN_USE,
   EMAIL_ALREADY_IN_USE,
-  EMAIL_ALREADY_VALIDATED,
   INTERNAL_SERVER_ERROR,
   INVALID_ID,
-  INVALID_TOKEN,
   INVALID_CREDENTIALS,
   UNAUTHORIZED_ACTION,
 } = require("../../../const/errors");
+const { hashPassword } = require("../../../utils/crypto");
 
 // @Endpoint:       Get /api/v1/admins
 // @Description:    Get a list of all admins
@@ -105,8 +103,7 @@ router.post(
       if (emailInUse) {
         return res.status(400).json(EMAIL_ALREADY_IN_USE);
       }
-      const salt = await bcrypt.genSalt(10);
-      const hashed = await bcrypt.hash(password, salt);
+      const hashed = await hashPassword(password);
       const newAdmin = new Admin({
         username,
         password: hashed,
@@ -168,8 +165,7 @@ router.put(
 
       // Adding Password to updates
       if (password) {
-        const salt = await bcrypt.genSalt(10);
-        const hashed = await bcrypt.hash(password, salt);
+        const hashed = await hashPassword(password);
         updates.password = hashed;
       }
 
