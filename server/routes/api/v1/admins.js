@@ -47,7 +47,7 @@ router.get("/:id", authAdmin, async (req, res) => {
     // Only superadmins or the admin with the request id can get the infos
     // IMPORTANT!!!! HAVING MULTIPLE SUPER ADMINS CAN CAUSE PROBLEMS !!!!
     if (loggedAdmin.permissions.superAdmin || req.admin.id === req.params.id) {
-      const adminInfo = await Admin.findById(req.params.id);
+      const adminInfo = await Admin.findById(req.params.id).select("-password");
       if (!adminInfo) {
         return res.status(400).json(INVALID_ID);
       }
@@ -198,6 +198,7 @@ router.put(
           updates,
           {
             new: true,
+            select: "-password",
           }
         );
         if (newUserInfo) {
@@ -230,7 +231,9 @@ router.delete("/:id", authAdmin, async (req, res) => {
       return res.status(401).json(UNAUTHORIZED_ACTION);
     }
     try {
-      const deletedAdmin = await Admin.findByIdAndDelete(req.params.id);
+      const deletedAdmin = await Admin.findByIdAndDelete(req.params.id).select(
+        "-password"
+      );
       if (deletedAdmin) {
         return res.json(deletedAdmin);
       }

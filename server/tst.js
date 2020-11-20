@@ -12,7 +12,9 @@ const ttt = async () => {
   const jwt = require("jsonwebtoken");
 
   const payload = {
-    a: "ff",
+    admin: {
+      id: "5fb83eb3c4b947bf32ec32b6",
+    },
   };
 
   const token = await jwt.sign(payload, "abcd");
