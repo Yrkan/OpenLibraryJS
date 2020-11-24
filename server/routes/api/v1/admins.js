@@ -28,7 +28,7 @@ router.get("/", authAdmin, async (req, res) => {
       return res.status(401).json(UNAUTHORIZED_ACTION);
     }
 
-    const adminsList = await Admin.find();
+    const adminsList = await Admin.find().select("-password");
     return res.send(adminsList);
   } catch (err) {
     console.error(err.message);

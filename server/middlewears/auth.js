@@ -49,7 +49,33 @@ const authUser = (req, res, next) => {
     return res.status(401).json(INVALID_TOKEN);
   }
 };
+
+const authUserOrAdmin = (req, res, next) => {
+  const token = req.header("x-auth-token");
+
+  // No token (Unauthorized access)
+  if (!token) {
+    return res.status(401).json(UNAUTHORIZED_ACCESS);
+  }
+  try {
+    // Decode the JWT
+    const decoded = jwt.decode(token, config.get("jwtKey"));
+    // Set a request parameter containing user informations
+    if (decoded.user) {
+      authUser(req, res, next);
+    } else if (decoded.admin) {
+      authAdmin(req, res, next);
+    } else {
+      return res.status(401).json(UNAUTHORIZED_ACCESS);
+    }
+  } catch (err) {
+    // In case the token is invalid
+    console.log(err);
+    return res.status(401).json(INVALID_TOKEN);
+  }
+};
 module.exports = {
   authAdmin,
   authUser,
+  authUserOrAdmin,
 };

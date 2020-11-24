@@ -7,7 +7,11 @@ const { hashPassword } = require("../../../utils/crypto");
 const User = require("../../../models/User");
 const Admin = require("../../../models/Admin");
 const { getValidUserOrNull } = require("../../../utils/db");
-const { authAdmin, authUser } = require("../../../middlewears/auth");
+const {
+  authAdmin,
+  authUser,
+  authUserOrAdmin,
+} = require("../../../middlewears/auth");
 const {
   USERNAME_ALREADY_IN_USE,
   EMAIL_ALREADY_IN_USE,
@@ -19,6 +23,65 @@ const {
   UNAUTHORIZED_ACTION,
 } = require("../../../const/errors");
 const router = Router();
+
+// @Endpoint:       Get /api/v1/users
+// @Description:    Get a list of all users
+// @Access:         Private
+router.get("/", authAdmin, async (req, res) => {
+  try {
+    const loggedAdmin = await Admin.findById(req.admin.id);
+    if (!loggedAdmin) return res.status(401).json(INVALID_CREDENTIALS);
+
+    // Only superadmins or admins with manageUsers get a list of all users
+    if (
+      loggedAdmin.permissions.superAdmin ||
+      loggedAdmin.permissions.manageUsers
+    ) {
+      const usersList = await User.find().select("-password");
+      return res.send(usersList);
+    }
+    return res.status(401).json(UNAUTHORIZED_ACTION);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json(INTERNAL_SERVER_ERROR);
+  }
+});
+
+// @Endpoint:       Get /api/v1/users/:id
+// @Description:    Get a single user
+// @Access:         Private
+router.get("/:id", authUserOrAdmin, async (req, res) => {
+  try {
+    const paramID = req.params.id;
+    // Only superadmins or the admin with manage users, or the users themselves can get the infos
+    let allowed = false;
+    if (req.user) {
+      if (req.user.id === req.params.id) {
+        allowed = true;
+      }
+    } else if (req.admin) {
+      const loggedAdmin = await Admin.findById(req.admin.id);
+      if (
+        loggedAdmin.permissions.superAdmin ||
+        loggedAdmin.permissions.manageUsers
+      ) {
+        allowed = true;
+      }
+    }
+
+    if (allowed) {
+      const userInfo = await User.findById(paramID).select("-password");
+      if (!userInfo) {
+        return res.status(400).json(INVALID_ID);
+      }
+      return res.json(userInfo);
+    }
+    return res.status(401).json(UNAUTHORIZED_ACTION);
+  } catch (err) {
+    console.log(err);
+    //return res.status(500).json(INTERNAL_SERVER_ERROR);
+  }
+});
 
 // @Endpoint:       POST /api/v1/user/register/
 // @Description:    Register a new user
