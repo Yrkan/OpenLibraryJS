@@ -13,6 +13,7 @@ const EMAIL_ALREADY_VALIDATED = { error: { msg: "Email already confirmed" } };
 
 // Unauthorized
 const UNAUTHORIZED_ACTION = { error: { msg: "Unauthorized action" } };
+const UNAUTHORIZED_ACCESS = { error: { msg: "Unauthorized acess" } };
 module.exports = {
   USERNAME_ALREADY_IN_USE,
   EMAIL_ALREADY_IN_USE,
@@ -22,4 +23,5 @@ module.exports = {
   INVALID_TOKEN,
   INVALID_CREDENTIALS,
   UNAUTHORIZED_ACTION,
+  UNAUTHORIZED_ACCESS,
 };

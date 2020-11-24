@@ -40,8 +40,8 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      const { username, password, email } = req.body;
 
+      const { username, password, email } = req.body;
       // Check if username or email are already in use
       if (await User.findOne({ username })) {
         return res.status(400).json(USERNAME_ALREADY_IN_USE);
