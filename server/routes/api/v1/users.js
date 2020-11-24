@@ -52,7 +52,6 @@ router.get("/", authAdmin, async (req, res) => {
 // @Access:         Private
 router.get("/:id", authUserOrAdmin, async (req, res) => {
   try {
-    const paramID = req.params.id;
     // Only superadmins or the admin with manage users, or the users themselves can get the infos
     let allowed = false;
     if (req.user) {
@@ -70,7 +69,7 @@ router.get("/:id", authUserOrAdmin, async (req, res) => {
     }
 
     if (allowed) {
-      const userInfo = await User.findById(paramID).select("-password");
+      const userInfo = await User.findById(req.params.id).select("-password");
       if (!userInfo) {
         return res.status(400).json(INVALID_ID);
       }
