@@ -13,6 +13,7 @@ const {
   UNAUTHORIZED_ACTION,
 } = require("../../../const/errors");
 const { hashPassword } = require("../../../utils/crypto");
+const { getValidAdminOrNull } = require("../../../utils/db");
 
 // @Endpoint:       Get /api/v1/admins
 // @Description:    Get a list of all admins
@@ -224,7 +225,7 @@ router.delete("/:id", authAdmin, async (req, res) => {
   try {
     // Only superadmins can edit other admins
     // IMPORTANT!!!! HAVING MULTIPLE SUPER ADMINS CAN CAUSE PROBLEMS !!!!
-    const loggedAdmin = await Admin.findById(req.admin.id);
+    const loggedAdmin = getValidAdminOrNull(req.admin.id);
     if (!loggedAdmin) res.status(401).json(INVALID_CREDENTIALS);
 
     if (!loggedAdmin.permissions.superAdmin) {
@@ -234,6 +235,7 @@ router.delete("/:id", authAdmin, async (req, res) => {
       const deletedAdmin = await Admin.findByIdAndDelete(req.params.id).select(
         "-password"
       );
+
       if (deletedAdmin) {
         return res.json(deletedAdmin);
       }

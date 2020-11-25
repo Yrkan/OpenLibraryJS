@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Admin = require("../models/User");
 
 const getValidUserOrNull = async (id) => {
   let user;
@@ -10,6 +11,16 @@ const getValidUserOrNull = async (id) => {
   }
 };
 
+const getValidAdminOrNull = async (id) => {
+  let admin;
+  try {
+    admin = await Admin.findById(id).select("-password");
+    return admin;
+  } catch (err) {
+    return null;
+  }
+};
 module.exports = {
   getValidUserOrNull,
+  getValidAdminOrNull,
 };

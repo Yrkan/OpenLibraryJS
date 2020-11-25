@@ -22,6 +22,7 @@ const {
   INVALID_CREDENTIALS,
   UNAUTHORIZED_ACTION,
 } = require("../../../const/errors");
+const { USER_REGISTRED_SUCCESSFULLY } = require("../../../const/messages");
 const router = Router();
 
 // @Endpoint:       Get /api/v1/users
@@ -122,8 +123,7 @@ router.post(
       });
 
       await newUser.save();
-      // TODO : returning the password is risky return token instead
-      return res.json(newUser);
+      return res.json(USER_REGISTRED_SUCCESSFULLY);
     } catch (err) {
       console.error(err.message);
       return res.status(500).json(INTERNAL_SERVER_ERROR);
@@ -283,4 +283,53 @@ router.put(
     }
   }
 );
+
+// @Endpoint:       DELETE /api/v1/users/:id
+// @Description:    Delete a User
+// @Access:         Private
+router.delete("/:id", authUserOrAdmin, async (req, res) => {
+  try {
+    // Only superadmins, admins with manageUsers or the users can delete the
+    // IMPORTANT!!!! HAVING MULTIPLE SUPER ADMINS CAN CAUSE PROBLEMS !!!!
+    let allowed = false;
+    if (req.admin) {
+      const loggedAdmin = await Admin.findById(req.admin.id);
+      if (!loggedAdmin) res.status(401).json(INVALID_CREDENTIALS);
+
+      if (
+        loggedAdmin.permissions.superAdmin ||
+        loggedAdmin.permissions.manageUsers
+      ) {
+        allowed = true;
+      } else {
+        return res.status(401).json(UNAUTHORIZED_ACTION);
+      }
+    }
+
+    if (req.user) {
+      if (req.user.id !== req.params.id) {
+        return res.status(401).json(UNAUTHORIZED_ACTION);
+      }
+      allowed = true;
+    }
+    if (allowed) {
+      try {
+        const deletedUser = await User.findByIdAndDelete(req.params.id).select(
+          "-password"
+        );
+        if (deletedUser) {
+          return res.json(deletedUser);
+        }
+        return res.status(400).json(INVALID_ID);
+      } catch (err) {
+        console.error(err);
+        return res.status(400).json(INVALID_ID);
+      }
+    }
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json(INTERNAL_SERVER_ERROR);
+  }
+});
+
 module.exports = router;
